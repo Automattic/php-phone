@@ -300,4 +300,28 @@ class Mobile_Validator_Test extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
 	}
+
+	public function test_PRI_phone_quick_test_1() {
+		$number = '+1-787-672-9999';
+		$country = 'PRI';
+		$result = array( '+17876729999', 'PRI' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_PRI_phone_quick_test_2() {
+		$number = '17876729999';
+		$country = 'PRI';
+		$result = array( '+17876729999', 'PRI' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_PRI_phone_quick_test_3() {
+		$number = '7876729999';
+		$country = 'PRI';
+		$result = array( '+17876729999', 'PRI' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
 }
