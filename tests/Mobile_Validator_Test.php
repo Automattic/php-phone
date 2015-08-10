@@ -252,10 +252,51 @@ class Mobile_Validator_Test extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
 	}
+
 	public function test_MEX_phone_15() {
 		$number = '762 100 9517';
 		$country = 'Mexico Invalid';
 		$result = array();
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_HKG_phone_quick_test_1() {
+		$number = '6123-6123';
+		$country = 'HKG';
+		$result = array( '+85261236123', 'HKG' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_BRA_phone_quick_test_1() {
+		$number = '+55 11 9 6123 1234';
+		$country = 'BRA';
+		$result = array( '+5511961231234', 'BRA' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_BRA_phone_quick_test_2() {
+		$number = '+55 11 6123 1234'; // as 9 is missing
+		$country = 'BRA';
+		$result = array();
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_BRA_phone_quick_test_3() {
+		$number = '+55 11 8 6123 1234'; // prefix must be 9 after area code
+		$country = 'BRA';
+		$result = array();
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_BRA_phone_quick_test_4() {
+		$number = '+55 69 8 6123 1234'; // we don't check prefix for area code 69
+		$country = 'BRA';
+		$result = array( '+5569861231234', 'BRA' );
 
 		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
 	}
