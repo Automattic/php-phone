@@ -363,4 +363,28 @@ class Mobile_Validator_Test extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
 	}
+
+	public function test_THA_phone_quick_test_1() {
+		$number = '0812345678'; // remove the leading 0
+		$country = 'THA';
+		$result = array( '+66812345678', 'THA' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_THA_phone_quick_test_2() {
+		$number = '0912345678'; // remove the leading 0
+		$country = 'THA';
+		$result = array( '+66912345678', 'THA' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_THA_phone_quick_test_3() {
+		$number = '812345678';
+		$country = 'THA';
+		$result = array( '+66812345678', 'THA' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
 }
