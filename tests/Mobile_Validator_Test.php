@@ -324,4 +324,43 @@ class Mobile_Validator_Test extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
 	}
+
+	public function test_RUS_phone_quick_test_1() {
+		$number = '89234567890';// remove the 8, treat it as 9234567890
+		$country = 'RUS';
+		$result = array( '+79234567890', 'RUS' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_RUS_phone_quick_test_2() {
+		$number = '+79234567890';
+		$country = 'RUS';
+		$result = array( '+79234567890', 'RUS' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_RUS_phone_quick_test_3() {
+		$number = '+79234567890';
+		$country = '';
+		$result = array( '+79234567890', 'RUS' );
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+	public function test_RUS_phone_quick_test_4() {
+		$number = '+70234567890';
+		$country = 'RUS';
+		$result = array(); // as 0 is not a valid prefix, must be 9
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
+
+	public function test_RUS_phone_quick_test_5() {
+		$number = '+79234567890';
+		$country = 'USA';
+		$result = array();
+
+		$this->assertEquals( $this->mobile_validator->normalize( $number, $country ), $result );
+	}
 }
