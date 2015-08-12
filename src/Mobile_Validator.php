@@ -49,7 +49,6 @@ class Mobile_Validator {
 					if ( empty( $iso3166_entry["mobile_begin_with"] ) ) {
 						return $iso3166_entry;
 					}
-					return $iso3166_entry;
 
 					// comment originated from node-phone:
 					// it match.. but may have more than one result.
