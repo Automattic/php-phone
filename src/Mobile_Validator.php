@@ -32,7 +32,7 @@ class Mobile_Validator {
 			}
 		}
 
-		return null;
+		return array();
 	}
 
 	private function get_iso3166_by_phone( $phone_number ) {
@@ -89,7 +89,7 @@ class Mobile_Validator {
 
 	function normalize( $phone_number, $country_name = null ) {
 		if ( empty( $phone_number ) || !is_string( $phone_number ) ) {
-			return null;
+			return array();
 		}
 		if ( empty( $country_name ) || !is_string ( $country_name ) ) {
 			$country_name = "";
@@ -105,7 +105,7 @@ class Mobile_Validator {
 		$iso3166_entry = $this->get_iso3166_entry( $country_name );
 
 		if( empty( $iso3166_entry ) ) {
-			return null;
+			return array();
 		}
 
 		if( $country_name ) {
@@ -159,7 +159,7 @@ class Mobile_Validator {
 		if ( $this->validate_phone_iso3166( $phone_number, $iso3166_entry ) ) {
 			return array( "+" . $phone_number, $iso3166_entry["alpha3"] );
 		} else {
-			return null;
+			return array();
 		}
 	}
 }
