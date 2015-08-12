@@ -37,27 +37,27 @@ class Mobile_Validator {
 
 	private function get_iso3166_by_phone( $phone_number ) {
 		foreach ( Iso3166::$data as $iso3166_entry ) {
-			// comment originated from node-phone:
-			// if the country doesn't have mobile prefixes (e.g. about 20 countries, like
-			// Argentina), then return the first match, as we can do no better
-			if ( empty( $iso3166_entry["mobile_begin_with"] ) ) {
-				return $iso3166_entry;
-			}
-
 			foreach ( $iso3166_entry["phone_number_lengths"] as $number_length ) {
 				$country_code = $iso3166_entry["country_code"];
 
 				if ( preg_match( "/^$country_code/", $phone_number) &&
 					 strlen( $phone_number ) == strlen( $country_code ) + $number_length ) {
-					return $iso3166_entry;
-				}
 
-				// comment originated from node-phone:
-				// it match.. but may have more than one result.
-				// e.g. USA and Canada. need to check mobile_begin_with
-				foreach ( $iso3166_entry["mobile_begin_with"] as $mobile_prefix ) {
-					if ( preg_match( "/^$country_code$mobile_prefix/", $phone_number ) ) {
+					// comment originated from node-phone:
+					// if the country doesn't have mobile prefixes (e.g. about 20 countries, like
+					// Argentina), then return the first match, as we can do no better
+					if ( empty( $iso3166_entry["mobile_begin_with"] ) ) {
 						return $iso3166_entry;
+					}
+					return $iso3166_entry;
+
+					// comment originated from node-phone:
+					// it match.. but may have more than one result.
+					// e.g. USA and Canada. need to check mobile_begin_with
+					foreach ( $iso3166_entry["mobile_begin_with"] as $mobile_prefix ) {
+						if ( preg_match( "/^$country_code$mobile_prefix/", $phone_number ) ) {
+							return $iso3166_entry;
+						}
 					}
 				}
 			}
