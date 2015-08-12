@@ -117,7 +117,7 @@ class Mobile_Validator {
 
 			// comment originated from node-phone:
 			// remove leading 0s for all countries except 'GAB', 'CIV', 'COG'
-			if( !array_search( $alpha3, array( "GAB", "CIV", "COG" ) ) ) {
+			if( !in_array( $alpha3, array( "GAB", "CIV", "COG" ) ) ) {
 				$phone_number = preg_replace( "/^0+/", "", $phone_number );
 			}
 
@@ -139,7 +139,7 @@ class Mobile_Validator {
 				//	case 2
 				//		phone_number_length+phone_country_code.length == phone.length
 				//		then go to D
-				if( array_search( strlen( $phone_number ), $iso3166_entry["phone_number_lengths"] ) ) {
+				if( in_array( strlen( $phone_number ), $iso3166_entry["phone_number_lengths"] ) ) {
 					$phone_number = $iso3166_entry["country_code"] . $phone_number;
 				}
 			}
@@ -154,7 +154,7 @@ class Mobile_Validator {
 				// B: no country, no plus sign --> treat it as USA
 				// 1. check length if == 11, or 10, if 10, add +1, then go go D
 				// no plus sign, no country is given. then it must be USA
-				if ( array_search( strlen( $phone_number ), $iso3166_entry["phone_number_lengths"] ) ) {
+				if ( in_array( strlen( $phone_number ), $iso3166_entry["phone_number_lengths"] ) ) {
 					$phone_number = "1" . $phone_number;
 				}
 			}
