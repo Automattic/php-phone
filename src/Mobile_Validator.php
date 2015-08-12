@@ -63,10 +63,14 @@ class Mobile_Validator {
 			}
 		}
 
-		return null;
+		return array();
 	}
 
 	private function validate_phone_iso3166( $phone_number, $iso3166_entry ) {
+		if ( empty( $iso3166_entry ) ) {
+			return false;
+		}
+
 		$country_code = $iso3166_entry["country_code"];
 		$unprefix_number = preg_replace( "/^$country_code/", "" , $phone_number );
 
