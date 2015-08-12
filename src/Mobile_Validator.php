@@ -66,7 +66,25 @@ class Mobile_Validator {
 		return null;
 	}
 
-	private function validate_phone_iso3166( $phone, $iso3166_entry ) {
+	private function validate_phone_iso3166( $phone_number, $iso3166_entry ) {
+		$country_code = $iso3166_entry["country_code"];
+		$unprefix_number = preg_replace( "/^$country_code/", "" , $phone_number );
+
+		foreach ( $iso3166_entry["phone_number_lengths"] as $number_length ) {
+			if ( strlen( $unprefix_number ) == $number_length ) {
+				if ( empty( $iso3166_entry["mobile_begin_with"] ) ) {
+					return true;
+				}
+
+				foreach ( $iso3166_entry["mobile_begin_with"] as $mobile_prefix ) {
+					if ( preg_match( "/^$mobile_prefix/", $unprefix_number ) ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	function normalize( $phone_number, $country ) {
