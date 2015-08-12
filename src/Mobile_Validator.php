@@ -87,7 +87,7 @@ class Mobile_Validator {
 		return false;
 	}
 
-	function normalize( $phone_number, $country_name ) {
+	function normalize( $phone_number, $country_name = null ) {
 		if ( empty( $phone_number ) || !is_string( $phone_number ) ) {
 			return null;
 		}
