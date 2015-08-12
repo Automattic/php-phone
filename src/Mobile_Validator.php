@@ -122,7 +122,7 @@ class Mobile_Validator {
 
 			// comment originated from node-phone:
 			// if input 89234567890, RUS, remove the 8
-			if ($alpha3 == "RUS" && strlen( $phone_number ) == 11 && preg_match( "/^89/", $phone_number ) ) {
+			if ( $alpha3 == "RUS" && strlen( $phone_number ) == 11 && preg_match( "/^89/", $phone_number ) ) {
 				$phone_number = preg_replace("/^8+/", "", $phone_number );
 			}
 
