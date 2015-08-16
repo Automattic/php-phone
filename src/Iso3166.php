@@ -3,7 +3,10 @@
 namespace Automattic\Phone;
 
 class Iso3166 {
-  public static $data = array (
+	public static function get_data() {
+		return self::$data;
+	}
+	private static $data = array (
 	  0 =>
 	  array (
 		'alpha2' => 'US',
