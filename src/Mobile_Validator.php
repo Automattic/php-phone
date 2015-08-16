@@ -11,22 +11,28 @@ class Mobile_Validator {
 			return Iso3166::$data[0];
 
 		case 2:
+			$country_name_upper = strtoupper( $country_name );
+
 			foreach ( Iso3166::$data as $iso3166_entry ){
-				if ( strtoupper( $country_name ) == $iso3166_entry["alpha2"] ) {
+				if ( $country_name_upper == $iso3166_entry["alpha2"] ) {
 					return $iso3166_entry;
 				}
 			}
 
 		case 3:
+			$country_name_upper = strtoupper( $country_name );
+
 			foreach ( Iso3166::$data as $iso3166_entry ) {
-				if ( strtoupper( $country_name ) == $iso3166_entry["alpha3"] ) {
+				if ( $country_name_upper == $iso3166_entry["alpha3"] ) {
 					return $iso3166_entry;
 				}
 			}
 
 		default:
+			$country_name_upper = strtoupper( $country_name );
+
 			foreach ( Iso3166::$data as $iso3166_entry ) {
-				if (strtoupper( $country_name ) == strtoupper( $iso3166_entry["country_name"] ) ) {
+				if ( $country_name_upper == strtoupper( $iso3166_entry["country_name"] ) ) {
 					return $iso3166_entry;
 				}
 			}
