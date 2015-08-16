@@ -40,7 +40,7 @@ class Mobile_Validator {
 			foreach ( $iso3166_entry["phone_number_lengths"] as $number_length ) {
 				$country_code = $iso3166_entry["country_code"];
 
-				if ( preg_match( "/^$country_code/", $phone_number) &&
+				if ( strpos( $phone_number, $country_code ) === 0 &&
 					 strlen( $phone_number ) == strlen( $country_code ) + $number_length ) {
 
 					// comment originated from node-phone:
@@ -54,7 +54,7 @@ class Mobile_Validator {
 					// it match.. but may have more than one result.
 					// e.g. USA and Canada. need to check mobile_begin_with
 					foreach ( $iso3166_entry["mobile_begin_with"] as $mobile_prefix ) {
-						if ( preg_match( "/^$country_code$mobile_prefix/", $phone_number ) ) {
+						if ( strpos( $phone_number, "$country_code$mobile_prefix" ) === 0 ) {
 							return $iso3166_entry;
 						}
 					}
@@ -80,7 +80,7 @@ class Mobile_Validator {
 				}
 
 				foreach ( $iso3166_entry["mobile_begin_with"] as $mobile_prefix ) {
-					if ( preg_match( "/^$mobile_prefix/", $unprefix_number ) ) {
+					if ( strpos( $unprefix_number, $mobile_prefix ) === 0 ) {
 						return true;
 					}
 				}
