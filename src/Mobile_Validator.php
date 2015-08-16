@@ -8,7 +8,8 @@ class Mobile_Validator {
 	private function get_iso3166_entry( $country_name ) {
 		switch ( strlen( $country_name ) ) {
 		case 0:
-			return Iso3166::get_data()[0];
+			$usa_entry = Iso3166::get_data()[0];
+			return $usa_entry;
 
 		case 2:
 			$country_name_upper = strtoupper( $country_name );
