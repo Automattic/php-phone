@@ -9,382 +9,124 @@ class Mobile_Validator_Test extends \PHPUnit_Framework_TestCase {
 		$this->mobile_validator = new Mobile_Validator();
 	}
 
-	public function test_input_parameter_1() {
-		$number = '(852) 569-8900';
-		$expected = $this->mobile_validator->normalize( $number );
-		$this->assertEmpty( $expected );
+	private function check_normalize( $test_data ) {
+		foreach ( $test_data as $test_entry ) {
+			$number   = $test_entry[0];
+			$country  = $test_entry[1];
+			$expected = $test_entry[2];
+			$actual   = $this->mobile_validator->normalize( $number, $country );
+
+			$this->assertEquals( $expected, $actual );
+		}
 	}
 
-	public function test_input_parameter_2() {
-		$number = '+1 (817) 569-8900';
-		$expected = array( '+18175698900', 'USA' );
+	private $data_test_input_parameter = array(
+		array( '(852) 569-8900'   , null, array() ),
+		array( '+1 (817) 569-8900', null, array( '+18175698900', 'USA' ) ),
+		array( '+852 6569-8900'   , null, array( '+85265698900', 'HKG' ) ),
+		array( '+852 6569-8900'   , 'HKG', array( '+85265698900', 'HKG' ) ),
+	);
 
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number ) );
+	public function test_input_parameter() {
+		$this->check_normalize ( $this->data_test_input_parameter );
 	}
 
-	public function test_input_parameter_3() {
-		$number = '+852 6569-8900';
-		$expected = array( '+85265698900', 'HKG' );
+	private $data_test_USA = array(
+		array( '(852) 569-8900'   , ''               , array() ),
+		array( '+1 (817) 569-8900', ''               , array( '+18175698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', null             , array( '+18175698900', 'USA' ) ),
+		array( '2121234567'       , ''               , array( '+12121234567', 'USA' ) ),
+		array( '22-6569-8900'     , ''               , array() ),
+		array( '22-5569-8900'     , ''               , array( '+12255698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', 'United States'  , array( '+18175698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', 'United States ' , array( '+18175698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', 'USA'            , array( '+18175698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', 'USA '           , array( '+18175698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', 'US'             , array( '+18175698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', ' US'            , array( '+18175698900', 'USA' ) ),
+		array( '+1 (817) 569-8900', 'HKG'            , array() ),
+	);
 
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number ) );
+	public function test_USA_phone() {
+		$this->check_normalize ( $this->data_test_USA );
 	}
 
-	public function test_input_parameter_4() {
-		$number = '+852 6569-8900';
-		$country = 'HKG';
-		$expected = array( '+85265698900', 'HKG' );
+	private $data_test_MEX = array(
+		array( '+52 1 762 100 9517', null            , array( '+5217621009517', 'MEX' ) ),
+		array( '+52 1 762 100 9517', 'MEX'           , array( '+5217621009517', 'MEX' ) ),
+		array( '+52 1 762 100 9517', 'USA'           , array() ),
+		array( '+52 1 762 100 9517', 'Mexico'        , array( '+5217621009517', 'MEX' ) ),
+		array( '+52 1 762 100 9517', 'United States' , array() ),
+		array( '+52 62 100 9517'   , null            , array() ),
+		array( '+52 62 100 9517'   , 'MEX'           , array() ),
+		array( '+52 62 100 9517'   , 'USA'           , array() ),
+		array( '+52 62 100 9517'   , 'Mexico'        , array() ),
+		array( '+52 62 100 9517'   , 'United States' , array() ),
+		array( '52762 100 9517'    , null            , array() ),
+		array( '762 100 9517'      , 'MEX'           , array( '+527621009517', 'MEX' ) ),
+		array( '762 100 9517'      , 'MEXINVALID'    , array() ),
+		array( '762 100 9517'      , 'Mexico'        , array( '+527621009517', 'MEX' ) ),
+		array( '762 100 9517'      , 'Mexico Invalid', array() ),
+	);
 
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
+	public function test_MEX_phone() {
+		$this->check_normalize ( $this->data_test_MEX );
 	}
 
-	public function test_USA_phone_1() {
-		$number = '(852) 569-8900';
-		$country = '';
-		$expected = array();
+	private $data_test_HKG = array (
+		array( '6123-6123', 'HKG', array( '+85261236123', 'HKG' ) ),
+	);
 
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
+	public function test_HKG_phone() {
+		$this->check_normalize ( $this->data_test_HKG );
 	}
 
-	public function test_USA_phone_2() {
-		$number = '+1 (817) 569-8900';
-		$country = '';
-		$expected = array( '+18175698900', 'USA' );
+	private $data_test_BRA = array(
+		array( '+55 11 9 6123 1234', 'BRA', array( '+5511961231234', 'BRA' ) ),
+		// as 9 is missing
+		array( '+55 11 6123 1234'  , 'BRA', array() ),
+		// prefix must be 9 after area code
+		array( '+55 11 8 6123 1234', 'BRA', array() ),
+		// we don't check prefix for area code 69
+		array( '+55 69 8 6123 1234', 'BRA', array( '+5569861231234', 'BRA' ) ),
+	);
 
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
+	public function test_BRA_phone() {
+		$this->check_normalize( $this->data_test_BRA );
 	}
 
-	public function test_USA_phone_3() {
-		$number = '+1 (817) 569-8900';
-		$country = null;
-		$expected = array( '+18175698900', 'USA' );
+	private $data_test_PRI = array(
+		array( '+1-787-672-9999', 'PRI', array( '+17876729999', 'PRI' ) ),
+		array( '17876729999'    , 'PRI', array( '+17876729999', 'PRI' ) ),
+		array( '7876729999'     , 'PRI', array( '+17876729999', 'PRI' ) ),
+	);
 
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
+	public function test_PRI_phone() {
+		$this->check_normalize( $this->data_test_PRI );
 	}
 
-	public function test_USA_phone_4() {
-		$number = '2121234567';
-		$country = '';
-		$expected = array( '+12121234567', 'USA' );
+	private $data_test_RUS = array(
+		// remove the 8, treat it as 9234567890
+		array( '89234567890' , 'RUS', array( '+79234567890', 'RUS' ) ),
+		array( '+79234567890', 'RUS', array( '+79234567890', 'RUS' ) ),
+		array( '+79234567890', ''   , array( '+79234567890', 'RUS' ) ),
 
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
+		// as 0 is not a valid prefix, must be 9
+		array( '+70234567890', 'RUS', array() ),
+		array( '+79234567890', 'USA', array() ),
+	);
+	public function test_RUS_phone() {
+		$this->check_normalize( $this->data_test_RUS );
 	}
 
-	public function test_USA_phone_5() {
-		$number = '22-6569-8900';
-		$country = '';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_6() {
-		$number = '22-5569-8900';
-		$country = '';
-		$expected = array( '+12255698900', 'USA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_7() {
-		$number = '+1 (817) 569-8900';
-		$country = 'United States';
-		$expected = array( '+18175698900', 'USA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_8() {
-		$number = '+1 (817) 569-8900';
-		$country = 'United States ';
-		$expected = array ( '+18175698900', 'USA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_9() {
-		$number = '+1 (817) 569-8900';
-		$country = 'USA';
-		$expected = array( '+18175698900', 'USA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_10() {
-		$number = '+1 (817) 569-8900';
-		$country = 'USA ';
-		$expected = array( '+18175698900', 'USA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_11() {
-		$number = '+1 (817) 569-8900';
-		$country = 'US';
-		$expected = array( '+18175698900', 'USA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_12() {
-		$number = '+1 (817) 569-8900';
-		$country = ' US';
-		$expected = array( '+18175698900', 'USA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_USA_phone_13() {
-		$number = '+1 (817) 569-8900';
-		$country = 'HKG';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_1() {
-		$number = '+52 1 762 100 9517';
-		$country = null;
-		$expected = array( '+5217621009517', 'MEX' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_2() {
-		$number = '+52 1 762 100 9517';
-		$country = 'MEX';
-		$expected = array( '+5217621009517', 'MEX' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_3() {
-		$number = '+52 1 762 100 9517';
-		$country = 'USA';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_4() {
-		$number = '+52 1 762 100 9517';
-		$country = 'Mexico';
-		$expected = array( '+5217621009517', 'MEX' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_5() {
-		$number = '+52 1 762 100 9517';
-		$country = 'United States';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_6() {
-		$number = '+52 62 100 9517';
-		$country = null;
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_7() {
-		$number = '+52 62 100 9517';
-		$country = 'MEX';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_8() {
-		$number = '+52 62 100 9517';
-		$country = 'USA';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_9() {
-		$number = '+52 62 100 9517';
-		$country = 'Mexico';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_10() {
-		$number = '+52 62 100 9517';
-		$country = 'United States';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_11() {
-		$number = '52762 100 9517';
-		$country = null;
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_12() {
-		$number = '762 100 9517';
-		$country = 'MEX';
-		$expected = array( '+527621009517', 'MEX' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_13() {
-		$number = '762 100 9517';
-		$country = 'MEXINVALID';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_14() {
-		$number = '762 100 9517';
-		$country = 'Mexico';
-		$expected = array( '+527621009517', 'MEX' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_MEX_phone_15() {
-		$number = '762 100 9517';
-		$country = 'Mexico Invalid';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_HKG_phone_quick_test_1() {
-		$number = '6123-6123';
-		$country = 'HKG';
-		$expected = array( '+85261236123', 'HKG' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_BRA_phone_quick_test_1() {
-		$number = '+55 11 9 6123 1234';
-		$country = 'BRA';
-		$expected = array( '+5511961231234', 'BRA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_BRA_phone_quick_test_2() {
-		$number = '+55 11 6123 1234'; // as 9 is missing
-		$country = 'BRA';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_BRA_phone_quick_test_3() {
-		$number = '+55 11 8 6123 1234'; // prefix must be 9 after area code
-		$country = 'BRA';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_BRA_phone_quick_test_4() {
-		$number = '+55 69 8 6123 1234'; // we don't check prefix for area code 69
-		$country = 'BRA';
-		$expected = array( '+5569861231234', 'BRA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_PRI_phone_quick_test_1() {
-		$number = '+1-787-672-9999';
-		$country = 'PRI';
-		$expected = array( '+17876729999', 'PRI' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_PRI_phone_quick_test_2() {
-		$number = '17876729999';
-		$country = 'PRI';
-		$expected = array( '+17876729999', 'PRI' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_PRI_phone_quick_test_3() {
-		$number = '7876729999';
-		$country = 'PRI';
-		$expected = array( '+17876729999', 'PRI' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_RUS_phone_quick_test_1() {
-		$number = '89234567890';// remove the 8, treat it as 9234567890
-		$country = 'RUS';
-		$expected = array( '+79234567890', 'RUS' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_RUS_phone_quick_test_2() {
-		$number = '+79234567890';
-		$country = 'RUS';
-		$expected = array( '+79234567890', 'RUS' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_RUS_phone_quick_test_3() {
-		$number = '+79234567890';
-		$country = '';
-		$expected = array( '+79234567890', 'RUS' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-	public function test_RUS_phone_quick_test_4() {
-		$number = '+70234567890';
-		$country = 'RUS';
-		$expected = array(); // as 0 is not a valid prefix, must be 9
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_RUS_phone_quick_test_5() {
-		$number = '+79234567890';
-		$country = 'USA';
-		$expected = array();
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_THA_phone_quick_test_1() {
-		$number = '0812345678'; // remove the leading 0
-		$country = 'THA';
-		$expected = array( '+66812345678', 'THA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_THA_phone_quick_test_2() {
-		$number = '0912345678'; // remove the leading 0
-		$country = 'THA';
-		$expected = array( '+66912345678', 'THA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
-	}
-
-	public function test_THA_phone_quick_test_3() {
-		$number = '812345678';
-		$country = 'THA';
-		$expected = array( '+66812345678', 'THA' );
-
-		$this->assertEquals( $expected, $this->mobile_validator->normalize( $number, $country ) );
+	private $data_test_THA = array(
+		// remove the leading 0
+		array( '0812345678', 'THA', array( '+66812345678', 'THA' ) ),
+		array( '0912345678', 'THA', array( '+66912345678', 'THA' ) ),
+		array( '812345678' , 'THA', array( '+66812345678', 'THA' ) ),
+	);
+
+	public function test_THA_phone() {
+		$this->check_normalize( $this->data_test_THA );
 	}
 }
