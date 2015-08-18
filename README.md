@@ -24,3 +24,12 @@ Here is a cite that especially relevent:
 This is the only organized table I found about prefixes of mobile phone number in different countries.
 However, whether it is reliable is remained in questions.
 
+[ISO 3166](http://www.iso.org/iso/home/standards/country_codes.htm)  
+Note that the **country code of ISO3166** has nothing to do with the **country code of E.164**.
+The former is internationally-recognized identifiers for countries, which can be:
+
+* two letters (alpha-2)
+* three letters (alpha-3)
+* three digit numeric code (numeric-3)
+
+For example, the country code of United States is **US** for alpha-2, **USA** for alpha-3, and **840** for numeric-3.
