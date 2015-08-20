@@ -39,7 +39,7 @@ For clarification of ISO-3166 terms, please check the **Reference** section belo
         * [How to call CIV(Côte D'Ivoire)](http://www.howtocallabroad.com/ivory-coast/)
         * [How to call COG(Congo)](http://www.howtocallabroad.com/congo/)
     * If it is Russian number and begins with 89. Remove the 8. 
-        *[See this thread](https://www.lonelyplanet.com/thorntree/forums/europe-eastern-europe-the-caucasus/russia/russian-mobile-number)
+        * [See this thread](https://www.lonelyplanet.com/thorntree/forums/europe-eastern-europe-the-caucasus/russia/russian-mobile-number)
 1. Validate the processed number via the **spec entry**
     * Check if the length is in the **possible mobile number lengths**.
     * Check if the number's prefix is in the **possible mobile number prefixes**.
