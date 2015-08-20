@@ -1,6 +1,49 @@
 # php-phone
 The PHP port of [node-phone](https://github.com/Automattic/node-phone).
 
+# Input & Output
+
+## Input
+
+- `phone number`: The mobile phone number to be validated and be normalized.
+- `country name` (optional): The name of the country which the given number should belong to. It can be the following three forms:
+    * ISO3166 alpha-2 code
+    * ISO3166 alpha-3 code
+    * ISO3166 country name
+
+For clarification of ISO-3166 terms, please check the **Reference** section below.
+
+## Output
+
+- Success: An array containing the following two elements
+    - 0: **E.164-formated phone number**. I.e. **+(country code)(phone number)**
+    - 1: **alpha3** code of the country
+- Error: An empty array `array()`
+
+# Algorithm
+
+1. Search for the associated **ISO3166 identifiers and mobile number spec** entry. Denoted as **spec entry** in short in the following paragraphs.
+    1. If a country name is given, use it to search for **spec entry**.
+    1. If no country name is given while the phone number is prefixed with a **+** sign, search for **spec entry** by trying to match the **mobile prefixes** for each **spec entry**.
+    1. The **spec entry** contains the following field:
+        * ISO3166 alpha-2 code
+        * ISO3166 alpha-3 code
+        * ISO3166 country name
+        * Possible mobile number prefixes
+        * Possible mobile number lengths
+1. Remove all non-digit characters in the **phone number**.
+1. Apply location-specific preprocessing routines to the number. More specifically,
+    * Remove all leading zeros except for **GAB**, **CIV** and **COG**.
+        * [How to call GAB(Gabon)](http://www.howtocallabroad.com/gabon/)
+        * [How to call CIV(Côte D'Ivoire)](http://www.howtocallabroad.com/ivory-coast/)
+        * [How to call COG(Congo)](http://www.howtocallabroad.com/congo/)
+    * If it is Russian number and begins with 89. Remove the 8. 
+        *[See this thread](https://www.lonelyplanet.com/thorntree/forums/europe-eastern-europe-the-caucasus/russia/russian-mobile-number)
+1. Validate the processed number via the **spec entry**
+    * Check if the length is in the **possible mobile number lengths**.
+    * Check if the number's prefix is in the **possible mobile number prefixes**.
+1. If it is considered valid, return the final number as **+(country code)(proccessed number)** and the **alpha-3** code in the **spec entry**.
+
 # Test
 We use [PHPUnit](https://phpunit.de/) for unit testing. 
 After installing PHPUnit, execute the following command under the project root to launch the test suite:
