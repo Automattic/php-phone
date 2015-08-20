@@ -25,7 +25,8 @@ For clarification of ISO-3166 terms, please check the **Reference** section belo
 1. Search for the associated **ISO3166 identifiers and mobile number spec** entry. Denoted as **spec entry** in short in the following paragraphs.
     1. If a country name is given, use it to search for **spec entry**.
     1. If no country name is given while the phone number is prefixed with a **+** sign, search for **spec entry** by trying to match the **mobile prefixes** for each **spec entry**.
-    1. The **spec entry** contains the following field:
+    1. If neither the two above, take it as USA.
+    1. Note that the **spec entry** contains the following field:
         * ISO3166 alpha-2 code
         * ISO3166 alpha-3 code
         * ISO3166 country name
