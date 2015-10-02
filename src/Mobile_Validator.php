@@ -8,25 +8,32 @@ class Mobile_Validator {
 	private function get_iso3166_entry( $country_name ) {
 		switch ( strlen( $country_name ) ) {
 		case 0:
-			return Iso3166::$data[0];
+			$usa_entry = Iso3166::get_data()[0];
+			return $usa_entry;
 
 		case 2:
-			foreach ( Iso3166::$data as $iso3166_entry ){
-				if ( strtoupper( $country_name ) == $iso3166_entry["alpha2"] ) {
+			$country_name_upper = strtoupper( $country_name );
+
+			foreach ( Iso3166::get_data() as $iso3166_entry ){
+				if ( $country_name_upper == $iso3166_entry["alpha2"] ) {
 					return $iso3166_entry;
 				}
 			}
 
 		case 3:
-			foreach ( Iso3166::$data as $iso3166_entry ) {
-				if ( strtoupper( $country_name ) == $iso3166_entry["alpha3"] ) {
+			$country_name_upper = strtoupper( $country_name );
+
+			foreach ( Iso3166::get_data() as $iso3166_entry ) {
+				if ( $country_name_upper == $iso3166_entry["alpha3"] ) {
 					return $iso3166_entry;
 				}
 			}
 
 		default:
-			foreach ( Iso3166::$data as $iso3166_entry ) {
-				if (strtoupper( $country_name ) == strtoupper( $iso3166_entry["country_name"] ) ) {
+			$country_name_upper = strtoupper( $country_name );
+
+			foreach ( Iso3166::get_data() as $iso3166_entry ) {
+				if ( $country_name_upper == strtoupper( $iso3166_entry["country_name"] ) ) {
 					return $iso3166_entry;
 				}
 			}
@@ -36,7 +43,7 @@ class Mobile_Validator {
 	}
 
 	private function get_iso3166_by_phone( $phone_number ) {
-		foreach ( Iso3166::$data as $iso3166_entry ) {
+		foreach ( Iso3166::get_data() as $iso3166_entry ) {
 			foreach ( $iso3166_entry["phone_number_lengths"] as $number_length ) {
 				$country_code = $iso3166_entry["country_code"];
 
