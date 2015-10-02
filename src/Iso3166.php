@@ -2481,7 +2481,6 @@ class Iso3166 {
 		'country_name' => 'Mexico',
 		'mobile_begin_with' =>
 		array (
-		  0 => '',
 		),
 		'phone_number_lengths' =>
 		array (

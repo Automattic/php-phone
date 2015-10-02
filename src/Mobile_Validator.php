@@ -47,7 +47,7 @@ class Mobile_Validator {
 			foreach ( $iso3166_entry["phone_number_lengths"] as $number_length ) {
 				$country_code = $iso3166_entry["country_code"];
 
-				if ( preg_match( "/^$country_code/", $phone_number) &&
+				if ( 0 === strpos( $phone_number, $country_code ) &&
 					 strlen( $phone_number ) == strlen( $country_code ) + $number_length ) {
 
 					// comment originated from node-phone:
@@ -61,7 +61,7 @@ class Mobile_Validator {
 					// it match.. but may have more than one result.
 					// e.g. USA and Canada. need to check mobile_begin_with
 					foreach ( $iso3166_entry["mobile_begin_with"] as $mobile_prefix ) {
-						if ( preg_match( "/^$country_code$mobile_prefix/", $phone_number ) ) {
+						if ( 0 === strpos( $phone_number, "$country_code$mobile_prefix" ) ) {
 							return $iso3166_entry;
 						}
 					}
@@ -87,7 +87,7 @@ class Mobile_Validator {
 				}
 
 				foreach ( $iso3166_entry["mobile_begin_with"] as $mobile_prefix ) {
-					if ( preg_match( "/^$mobile_prefix/", $unprefix_number ) ) {
+					if ( 0 === strpos( $unprefix_number, $mobile_prefix ) ) {
 						return true;
 					}
 				}
@@ -129,7 +129,7 @@ class Mobile_Validator {
 
 			// comment originated from node-phone:
 			// if input 89234567890, RUS, remove the 8
-			if ( $alpha3 == "RUS" && strlen( $phone_number ) == 11 && preg_match( "/^89/", $phone_number ) ) {
+			if ( "RUS" == $alpha3 && 11 == strlen( $phone_number ) && preg_match( "/^89/", $phone_number ) ) {
 				$phone_number = preg_replace("/^8+/", "", $phone_number );
 			}
 
