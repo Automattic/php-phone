@@ -1,0 +1,6 @@
+{
+    "name": "automattic/php-phone",
+    "description": "Phone validation",
+    "license": "MIT",
+    "require": {}
+}
